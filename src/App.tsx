@@ -1,13 +1,16 @@
 import { useState } from 'react';
+import { Sun, Moon } from 'lucide-react';
 import { WeatherCard } from '@/components/WeatherCard';
 import { SearchForm } from '@/components/SearchForm';
 import { ErrorMessage } from '@/components/ErrorMessage';
 import { useWeatherInfo } from '@/hooks/useweatherInfo';
+import { useDarkMode } from '@/hooks/useDarkMode';
 
 function App() {
   // The hook expects a city, but SearchForm prop is named country; we treat it as a location query.
   const { loading, error, data, fetchWeatherData } = useWeatherInfo();
   const [country, setCountry] = useState(''); // naming kept to match SearchForm API
+  const { isDark, toggle: toggleDark } = useDarkMode();
 
   const handleSearch = () => {
     fetchWeatherData(country.trim());
@@ -16,7 +19,7 @@ function App() {
   return (
     <div className="min-h-dvh w-full bg-gradient-to-br from-stone-50 via-slate-50 to-stone-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 text-foreground">
       <div className="mx-auto max-w-4xl px-4 py-10 sm:py-14 flex flex-col gap-10">
-        <header className="flex flex-col items-center gap-4 text-center">
+  <header className="flex flex-col items-center gap-4 text-center relative">
           <h1 className="text-3xl sm:text-4xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-slate-700 via-slate-600 to-slate-500 dark:from-slate-200 dark:via-slate-300 dark:to-slate-400">
             Weather Insight
           </h1>
@@ -82,6 +85,21 @@ function App() {
           <span>Data provided by OpenWeatherMap • Built with Vite + React + Tailwind</span>
         </footer>
       </div>
+      <button
+        type="button"
+        onClick={toggleDark}
+        className="fixed top-3 right-3 z-50 inline-flex items-center justify-center rounded-full h-10 w-10 bg-black/5 dark:bg-white/10 backdrop-blur-sm hover:bg-black/10 dark:hover:bg-white/15 transition-all border border-border/60 shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+        aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+      >
+        <span className="relative flex items-center justify-center">
+          {isDark ? (
+            <Sun className="h-5 w-5 text-amber-300 transition-transform duration-500 rotate-[360deg]" />
+          ) : (
+            <Moon className="h-5 w-5 text-slate-700 dark:text-slate-200 transition-transform duration-500" />
+          )}
+        </span>
+        <span className="sr-only">{isDark ? 'Light mode' : 'Dark mode'}</span>
+      </button>
     </div>
   );
 }
