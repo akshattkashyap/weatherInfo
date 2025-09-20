@@ -11,8 +11,8 @@ Minimal weather lookup (city → current temp + feels-like) built with React, Ty
 
 ### Setup
 ```bash
-pnpm install
-pnpm dev
+npm install
+npm run dev
 ```
 Visit: http://localhost:5173
 
