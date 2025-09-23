@@ -11,7 +11,7 @@ export const useWeatherInfo = () => {
     const fetchWeatherData = useCallback(async (city: string) => {
         if (!city.trim()) {
             setError("Enter a valid City name");
-            return;
+            return null;
         }
 
         setLoading(true);
@@ -23,7 +23,7 @@ export const useWeatherInfo = () => {
             if (!API_KEY) {
                 setError("Missing API key configuration");
                 setLoading(false);
-                return;
+                return null;
             }
 
             const response = await fetch(
@@ -47,8 +47,10 @@ export const useWeatherInfo = () => {
             };
 
             setData(processedData);
+            return processedData;
         } catch (err) {
             setError(err instanceof Error ? err.message : "An unexpected error occurred");
+            return null;
         } finally {
             setLoading(false);
         }

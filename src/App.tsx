@@ -10,10 +10,14 @@ function App() {
   // The hook expects a city, but SearchForm prop is named country; we treat it as a location query.
   const { loading, error, data, fetchWeatherData } = useWeatherInfo();
   const [country, setCountry] = useState(''); // naming kept to match SearchForm API
+  const [cards, setCards] = useState<typeof data extends null ? never : NonNullable<typeof data>[]>([]);
   const { isDark, toggle: toggleDark } = useDarkMode();
 
-  const handleSearch = () => {
-    fetchWeatherData(country.trim());
+  const handleSearch = async () => {
+    const result = await fetchWeatherData(country.trim());
+    if (result) {
+      setCards((prev) => [result, ...prev]);
+    }
   };
 
   return (
@@ -63,18 +67,17 @@ function App() {
             </div>
           )}
 
-            {!loading && data && (
-              <div className="w-full max-w-lg animate-in fade-in zoom-in-50 duration-500">
-                <WeatherCard
-                  city={data.city}
-                  country={data.country}
-                  temp={data.temp}
-                  feels_like={data.feels_like}
-                />
-              </div>
-            )}
+          {!loading && cards.length > 0 && (
+            <div className="w-full max-w-lg grid gap-4 content-start">
+              {cards.map((c, idx) => (
+                <div key={`${c.city}-${c.country}-${idx}`} className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+                  <WeatherCard city={c.city} country={c.country} temp={c.temp} feels_like={c.feels_like} />
+                </div>
+              ))}
+            </div>
+          )}
 
-            {!loading && !data && !error && (
+          {!loading && cards.length === 0 && !error && (
               <div className="text-center text-muted-foreground text-sm sm:text-base">
                 Enter a city above to get the latest weather.
               </div>
