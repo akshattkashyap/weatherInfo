@@ -16,6 +16,8 @@ export const WeatherCard: FC<WeatherCardProps> = ({
   temp = 34,
   feels_like = 45,
 }) => {
+  temp--;
+
   // derive a simple tier to influence colors / icon
   const tier = useMemo(() => {
     if (temp == null) return 'na';
